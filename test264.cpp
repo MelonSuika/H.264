@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "string.h"
 #include "stdlib.h"
-
+#include "math.h"
 
 #define NALU_TYPE_SLICE 1
 #define NALU_TYPE_DPA 2
@@ -23,10 +23,10 @@
 typedef unsigned char u8;
 
 
-
 int _tmain(int argc, _TCHAR* argv[])
 {
-    FILE *fp = fopen("./1024x768.h264", "rb");
+
+    FILE *fp = fopen("./4cif-h264.data", "rb");
     if(NULL == fp)
     {
         printf("open fail\n");
@@ -40,46 +40,124 @@ int _tmain(int argc, _TCHAR* argv[])
     fclose(fp);
 
     int i = 0;
-    /*
-    for(; i < 256; i++)
-    {
-        printf("%3x ", pchData[i]);
-        if(!((i+1) % 16))
-        {
-            printf("\n");
-        }
-    }
-    */
-
-    int nNalType = 0, nPrevFrameStartPos = 0, nCurNalType = 0;
+    int nNalType = 0, nPrevFrameStartPos = 0, nCurNalType = 0, nFrameLen = 0, flag = 0, cnt = 0;
     fp = fopen("len.txt", "w");
     for(; i < nLen - 5; i++)
     {
         if(pchData[i] == 0 && pchData[i+1] == 0 && pchData[i+2] == 0 && pchData[i+3] == 1)
         {
             nNalType = pchData[i+4] & 0x1f;
-            if(nNalType == NALU_TYPE_SPS || nNalType == NALU_TYPE_PPS)
+            switch(nNalType)
             {
-                printf("pos:%d is %s\n", i, (nNalType == NALU_TYPE_SPS)?"sps":"pps");
-                nPrevFrameStartPos = i;    
+                case NALU_TYPE_SLICE:
+                    if(nNalType != nCurNalType)
+                    {
+                        if(nCurNalType >= NALU_TYPE_SLICE && nCurNalType <= NALU_TYPE_IDR)
+                        {
+                            nCurNalType = nNalType;
+                            printf("%d\n", i - nPrevFrameStartPos);
+                            nPrevFrameStartPos = i;
+                        }
+
+                    }
+                    else
+                    {
+                        cnt++;
+                        //first_mb_in_slice, ue(v)
+                        nCurNalType = nNalType;
+                        int leadingZeroBits = -1, codeNum = 0, tail = 0;
+                        unsigned int nPos = 0x80000000;
+                        unsigned int *dwFmis = NULL;
+                        dwFmis = new unsigned int;
+                        memcpy(dwFmis, pchData + i + 5, sizeof(unsigned int));
+                        for(int b = 0; !b; leadingZeroBits++)
+                        {
+                            b = *dwFmis & nPos;
+                            nPos >>= 1;
+                        }
+                        for(int j = leadingZeroBits; j >= 0; j--)
+                        {
+                            tail += (int)pow(2.0, j);
+                        }
+                        codeNum = (int)pow((float)2, leadingZeroBits) - 1 + tail;
+                        if(cnt < 50)
+                        printf("first_mb_in_slice:%d\n", codeNum);
+                        if(!codeNum)
+                        {
+                            printf("%d\n", i - nPrevFrameStartPos);
+                            nPrevFrameStartPos = i;
+                        }
+
+                    }
+                    break;
+                case NALU_TYPE_IDR:
+                    if(nNalType != nCurNalType)
+                    {
+                        if(nCurNalType >= NALU_TYPE_SLICE && nCurNalType <= NALU_TYPE_IDR)
+                        {
+                            nCurNalType = nNalType;
+                            printf("%d\n", i - nPrevFrameStartPos);
+                            nPrevFrameStartPos = i;
+                        }
+
+                    }
+                    else
+                    {
+                        cnt++;
+                        //first_mb_in_slice, ue(v)
+                        nCurNalType = nNalType;
+                        int leadingZeroBits = -1, codeNum = 0, tail = 0;
+                        unsigned int nPos = 0x80000000;
+                        unsigned int *dwFmis = NULL;
+                        dwFmis = new unsigned int;
+                        memcpy(dwFmis, pchData + i + 5, sizeof(unsigned int));
+                        for(int b = 0; !b; leadingZeroBits++)
+                        {
+                            b = *dwFmis & nPos;
+                            nPos >>= 1;
+                        }
+                        for(int j = leadingZeroBits; j >= 0; j--)
+                        {
+                            tail += (int)pow(2.0, j);
+                        }
+                        codeNum = (int)pow((float)2, leadingZeroBits) - 1 + tail;
+                        if(cnt < 50)
+                        printf("first_mb_in_slice:%d\n", codeNum);
+                        if(!codeNum)
+                        {
+                            printf("%d\n", i - nPrevFrameStartPos);
+                            nPrevFrameStartPos = i;
+                        }
+                    }
+                    break;
+                case NALU_TYPE_SEI:
+                    if(nCurNalType >= NALU_TYPE_SLICE && nCurNalType <= NALU_TYPE_IDR)
+                    {
+                        printf("%d\n", i - nPrevFrameStartPos);
+                        nPrevFrameStartPos = i;
+                    }
+                    break;
+                case NALU_TYPE_SPS:
+                    if(nCurNalType >= NALU_TYPE_SLICE && nCurNalType <= NALU_TYPE_IDR)
+                    {
+                        printf("%d\n", i - nPrevFrameStartPos);
+                        nPrevFrameStartPos = i;
+                    }
+                    break;
+                case NALU_TYPE_PPS:
+                    if(nCurNalType >= NALU_TYPE_SLICE && nCurNalType <= NALU_TYPE_IDR)
+                    {
+                        printf("%d\n", i - nPrevFrameStartPos);
+                        nPrevFrameStartPos = i;
+                    }
+                    break;
+                default:
+                    break;
             }
-            else
-            {
-                break;
-            }
+            
         } 
     }
-    for(int cnt = 0; i < nLen - 5; i++)
-    {
-        if(pchData[i] == 0 && pchData[i+1] == 0 && pchData[i+2] == 0 && pchData[i+3] == 1)
-        {
-            nNalType = pchData[i+4] & 0x1f;
-            if(nNalType >= NALU_TYPE_SLICE && nNalType <= NALU_TYPE_IDR)
-            {
-                if(pchData[i+5] & 0x)
-            }
-        } 
-    }
+    printf("%d\n", nLen - nFrameLen);
     fclose(fp);
     getchar();
 	return 0;
