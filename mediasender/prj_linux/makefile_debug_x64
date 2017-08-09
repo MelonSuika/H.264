@@ -1,0 +1,87 @@
+###
+### Copyright (c) 2009 Keda Telecom, Inc.
+###
+
+#########################################################################
+###
+###  DESCRIPTION:
+###    
+###
+#########################################################################
+
+TOP        := $(shell pwd)/../../../
+COMMON_TOP := $(TOP)/10-common
+
+SRC_DIR    := ../source
+
+## Name and type of the target for this Makefile
+
+APP_TARGET      := mnsender
+
+## Define debugging symbols
+DEBUG = 1
+LINUX_COMPILER=_LINUX_
+PWLIB_SUPPORT = 0
+
+ifeq ($(DEBUG), 1)
+	OBJ_DIR := $(shell pwd)/debug
+else
+	OBJ_DIR := $(shell pwd)/release
+endif
+
+## Object files that compose the target(s)
+## SRCS := $(shell ls $(SRC_DIR))
+## SRCS := $(basename $(shell find $(SRC_DIR) ! -name "senderTestDlg.cpp" ! -name "stdafx.cpp" -name "*.cpp"))
+SRCS := senderTest
+SRCS += sender
+OBJS := $(foreach obj,$(SRCS),$(OBJ_DIR)/$(obj))
+
+## Libraries to include in shared object file
+
+## Add driver-specific include directory to the search path
+GLIB_BASE := $(TOP)
+
+ifeq ($(DEBUG), 1)
+	LIB_PATH += $(COMMON_TOP)/lib/debug/linux_x64
+else
+	LIB_PATH += $(COMMON_TOP)/lib/release/linux/
+endif
+
+LIB_PATH +=  $(GLIB_BASE)
+
+
+INC_PATH += ../include
+## INC_PATH += ../../include
+
+INC_PATH += $(COMMON_TOP)/include/platform
+INC_PATH += $(COMMON_TOP)/include/protocol
+INC_PATH += $(COMMON_TOP)/include/system
+
+
+#extra
+INC_PATH += $(GLIB_BASE)/usr/include/glib-2.0
+INC_PATH += $(GLIB_BASE)/usr/lib/glib-2.0/include
+
+
+CFLAGS := -m64
+
+ifeq ($(DEBUG), 1)
+	INSTALL_APP_PATH = $(shell pwd)/debug
+else
+	INSTALL_APP_PATH = $(shell pwd)/release
+endif
+
+USE_CXX_AS_LD := 1
+
+LIBS := \
+gthread-2.0 \
+glib-2.0 \
+osp \
+kdvmedianet \
+kprop
+
+LDFLAGS := -lpthread -lrt
+LDFLAGS += -m64
+CFLAGS += -D_OSP_64_HEADER -D_KDVMEDIANET_64_HEADER
+
+include ./common.mk
