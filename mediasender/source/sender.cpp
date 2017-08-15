@@ -1,4 +1,5 @@
 ﻿#include "sender.h"
+
 #ifdef WIN32
 #include "resource.h"
 #endif
@@ -16,9 +17,7 @@
 #else
 #define LINUX_TIME      1000
 #endif
-#define SAFE_FCLOSE(p)          if(p){fclose(p),p=NULL;}
-#define SAFE_DELETEA(p)         if(p){delete []p,p=NULL;}
-#define SAFE_DELETE(p)          if(p){delete p,p=NULL;}
+
 
 
 
@@ -105,7 +104,20 @@ u16 CSender::Init(void)
     /* 长度文件处理 */
     g_snprintf(m_pchMediaLenName, MAX_FILENAME, "%s.len", m_pchMediaDatName);
     SetMediaType(m_nMediaType);
-
+    s32 nRet = access(m_pchMediaLenName, F_OK);
+    if (F_OK != nRet)
+    {
+        if (MEDIA_TYPE_H264 != m_nMediaType)
+        {
+            PrintLCommon("非H264媒体文件且无媒体长度文件，无法解析");
+            return NO_LENFILE_ERROR;
+        }
+        else
+        {
+            CreateFrameLen(m_pchMediaDatName);
+        }
+    }
+    
     /* 延时和帧大小计算 */
     m_dwLoopTime = 1000 * LINUX_TIME / m_nFramerate;
     m_dwFrameSize = 1024 * 1024;
@@ -421,6 +433,11 @@ s8 * CSender::GetMediaDatName(void)
     return m_pchMediaDatName;
 }
 
+/* get mediaLenName */
+s8 * CSender::GetMediaLenName(void)
+{
+    return m_pchMediaLenName;
+}
 /* set send srcip */
 void CSender::SetSrcIp(const s8 *pchSrcIp)
 {
@@ -540,12 +557,17 @@ void CSender::SetMediaType(s32 nMediaType)
 }
 
 
-/* get MediaType */
-s8* CSender::GetMediaType(void)
+/* get MediaTypeName */
+s8* CSender::GetMediaTypeName(void)
 {
     return m_pchMediaTypeName;
 }
 
+/* get MediaTypeNum */
+s32 CSender::GetMeidaTypeNum(void)
+{
+    return m_nMediaType;
+}
 /* print sender info */
 void CSender::PrintInfo(void)
 {

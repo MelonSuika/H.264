@@ -7,17 +7,23 @@
 #include "kdvdef.h"
 #include "mediatype.h"
 #include "osp.h"
+#include "io.h"
+#include "h264Len.h"
 #ifdef WIN32
 #include <atlconv.h>
 #else
 #include "glib.h"
 #endif
 
+#define SAFE_FCLOSE(p)          if (p){fclose(p), p = NULL;}
+#define SAFE_DELETEA(p)         if (p){delete []p, p = NULL;}
+#define SAFE_DELETE(p)          if (p){delete p, p = NULL;}
+
 #define SND_NO_ERROR        (u16)(0)
 #define GET_EDIT_ERROR      (u16)(1)
 #define GET_SND_ERROR       (u16)(2)
 #define CREATE_SND_ERROR    (u16)(3)
-
+#define NO_LENFILE_ERROR    (u16)(4)
 
 #define DATA_LEN                (512 * 1024)                  // 一帧数据最大长度
 #define LEN_LEN                 (32)                          // 媒体文件长度长度
@@ -29,7 +35,11 @@
 #define PORT_ADD_NUM            (2)                           // 多路发送时，端口间隔
 #define MAX_LINE                (500)                         // 控件最大显示行数
 
-
+#define F_OK        0
+#define X_OK        1
+#define W_OK        2
+#define R_OK        4  
+#define WR_OK       6
 
 class CSender
 {
@@ -88,6 +98,7 @@ public:
     s32  GetSrcIpPort(void);            // 获取本地端口
     void SetMediaDatName(const s8* pchFilename); // 设置媒体文件名
     s8 * GetMediaDatName(void);         // 获取媒体文件名
+    s8 * GetMediaLenName(void);         // 获取媒体长度文件名
     void SetSrcIp(const s8* pchSrcIp);        // 设置发送端ip
     s8 * GetSrcIp(void);                // 获取发送端ip
     void SetDstIp(const s8* pchDstIp);        // 设置目的端(接收方)ip
@@ -97,7 +108,8 @@ public:
     void SetRepeat(BOOL32 bIsRepeat);   // 设置重复发送
     BOOL32 GetRepeat(void);             // 获取重复发送
     void SetMediaType(s32 nMediaType);  // 设置媒体类型
-    s8*  GetMediaType(void);            // 获取媒体类型
+    s8*  GetMediaTypeName(void);        // 获取媒体类型名
+    s32  GetMeidaTypeNum(void);            // 获取媒体类型号
     void SetIsStop(BOOL32 bIsStop);     // 设置标志位
     void SetNetBand(u32 dwNetBand);     // 设置带宽
     u32  GetNetBand(void);              // 获取带宽

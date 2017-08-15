@@ -143,7 +143,7 @@ void CsenderTestDlg::OnCancel()
        AfxMessageBox(_T("有线程未退出,先停止发送")); 
         return ;
     }
-    delete []g_pSender;
+    SAFE_DELETEA(g_pSender);
     CDialog::OnCancel();
 
 }
@@ -164,9 +164,9 @@ void CsenderTestDlg::GetConfig()
 		::WritePrivateProfileStringW(_T("FILTERINFO"), _T("TYPE"), _T("106"), _T("./config.ini"));
 
 		// 发送信息
-		::WritePrivateProfileStringW(_T("SENDINFO"), _T("DST_IP"), _T("172.16.82.3"), _T("./config.ini"));
+		::WritePrivateProfileStringW(_T("SENDINFO"), _T("DST_IP"), _T("127.0.0.1"), _T("./config.ini"));
 		::WritePrivateProfileStringW(_T("SENDINFO"), _T("DST_PORT"), _T("7200"), _T("./config.ini"));
-		::WritePrivateProfileStringW(_T("SENDINFO"), _T("SRC_IP"), _T("172.16.82.3"), _T("./config.ini"));
+		::WritePrivateProfileStringW(_T("SENDINFO"), _T("SRC_IP"), _T("127.0.0.1"), _T("./config.ini"));
 		::WritePrivateProfileStringW(_T("SENDINFO"), _T("SRC_PORT"), _T("6500"), _T("./config.ini"));
 		::WritePrivateProfileStringW(_T("SENDINFO"), _T("REPEAT"), _T("1"), _T("./config.ini"));
 		::WritePrivateProfileStringW(_T("SENDINFO"), _T("FRAMERATE"), _T("10"), _T("./config.ini"));
@@ -188,7 +188,7 @@ void CsenderTestDlg::GetConfig()
 	m_isRepeat = g_pSender[0].GetRepeat();
 	m_NetBand = g_pSender[0].GetNetBand();
 	
-    m_cbmediaType.Format(_T("%s"), A2W(g_pSender[0].GetMediaType()));
+    m_cbmediaType.Format(_T("%s"), A2W(g_pSender[0].GetMediaTypeName()));
     m_nSendPathNum = 1;
     SndInit(1, m_NetBand, m_frameRate, m_dwBitRate);
 	UpdateData(false);
@@ -305,6 +305,19 @@ void CsenderTestDlg::ActiveX2Snd(s32 nNum)
        m_cbLines.GetLBText(nIndex, strCBText);
        g_pSender[i].SetOutLines(atoi(W2A(strCBText)));
        
+    }
+    s32 nRet = access(g_pSender[0].GetMediaLenName(), F_OK);
+    if (F_OK != nRet)
+    {
+        if (MEDIA_TYPE_H264 != g_pSender[0].GetMeidaTypeNum())
+        {
+            AfxMessageBox(_T("非H264媒体文件且无媒体长度文件，无法解析"));
+            return ;
+        }
+        else
+        {
+            CreateFrameLen(g_pSender[0].GetMediaDatName());
+        }
     }
     return ;
 }
