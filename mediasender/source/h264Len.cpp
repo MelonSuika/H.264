@@ -10,12 +10,12 @@ u32 GolombCode(u8 *pchData, s32 i, BOOL32 bIsZero)
     u32 dwCodeNum = 0;          // CodeNum值
     u32 dwTail = 0;             // 编码后缀
     u32 dwOffset = 0;           // 移位偏移量
-    u8 wPos = 0x80;
-    u32 dwOffsetByte  = 0;
+    u8  byPos = 0x80;           // & 变量
+    u32 dwOffsetByte  = 0;      // 偏移字节数
 
     if (bIsZero)
     {
-        return !(pchData[i+5] & wPos);
+        return !(pchData[i+5] & byPos);
     }
     /* 得到前导零的数量 */
     for(s32 b = 0; !b; nLeadingZeroBits++)
@@ -23,19 +23,19 @@ u32 GolombCode(u8 *pchData, s32 i, BOOL32 bIsZero)
         if (!((nLeadingZeroBits + 1) % 8) && (nLeadingZeroBits + 1))
         {
             dwOffsetByte++;
-            wPos = 0x80;
+            byPos = 0x80;
         }
-        b = pchData[i + 5 + dwOffsetByte] & wPos;
-        wPos >>= 1;
+        b = pchData[i + 5 + dwOffsetByte] & byPos;
+        byPos >>= 1;
     }
 
-    wPos = 0x80;
+    byPos = 0x80;
 
     /* 后缀计算 */
     for(s32 k = nLeadingZeroBits; k >= 0; k--)
     {
         dwOffset = 2 * nLeadingZeroBits - k + 1;
-        dwTail += (u32)pow(2.0, k - 1) * (pchData[i + 5 + dwOffset / 8] & (wPos >> ((dwOffset % 8) ? 1 : 0)));
+        dwTail += (u32)pow(2.0, k - 1) * (pchData[i + 5 + dwOffset / 8] & (byPos >> ((dwOffset % 8) ? 1 : 0)));
     }
 
     /* ue(v)的值计算 */
@@ -83,6 +83,8 @@ void CreateFrameLen(const s8 * pchFileName)
     if (!fp)
     {
         printf("open lenFile fail\n");
+        SAFE_DELETEA(pchData);
+        SAFE_DELETEA(pchLenFileName);
         return ;
     }
 
@@ -254,6 +256,7 @@ void CreateFrameLen(const s8 * pchFileName)
     printf("%d\n", nFileLen - nPreFrameStartPos);
     sprintf_s(pchFrameLen, MAX_FRAME_LEN, "%d\n", nFileLen - nPreFrameStartPos);
     fwrite(pchFrameLen, strlen(pchFrameLen), 1, fp);
+    SAFE_DELETEA(pchData);
     SAFE_DELETEA(pchLenFileName);
     SAFE_DELETEA(pchFrameLen);
     SAFE_FCLOSE(fp);

@@ -112,10 +112,10 @@
     <ClInclude Include="..\..\include\h264Len.h" />
     <ClInclude Include="..\..\include\mediatype.h" />
     <ClInclude Include="..\..\include\sender.h" />
+    <ClInclude Include="..\..\include\senderTestDlg.h" />
     <ClInclude Include="..\..\include\stdafx.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="senderTest.h" />
-    <ClInclude Include="senderTestDlg.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>

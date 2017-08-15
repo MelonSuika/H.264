@@ -27,9 +27,6 @@
     <ClInclude Include="senderTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="senderTestDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -49,6 +46,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\h264Len.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\senderTestDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

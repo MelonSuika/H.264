@@ -36,7 +36,6 @@ protected:
 // init, read .ini
 public:
 	void GetConfig();
-    void PrintInfo(CString);
 
 public:
 	afx_msg void OnBnClickedStartSendButton();

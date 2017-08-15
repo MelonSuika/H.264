@@ -1,7 +1,13 @@
 
 // senderTestDlg.cpp : implementation file
 //
-
+//lint -e1046   error,成员在静态函数中需由对象来引用,但并没有在静态函数中
+//lint -e1039   error,不是类成员，但实际上是类成员
+//lint -e522    warning
+//lint -e110    error,win32下句柄类型就是void*
+//lint -e1032   error,该函数为成员函数，在类内部调用
+//lint -e1018   error,DWORD为win32下定义的类型
+//lint -e48     error,该接口返回值为指针操作数
 #include "stdafx.h"
 #include "senderTest.h"
 #include "senderTestDlg.h"
@@ -19,7 +25,7 @@
 static void CreateSnd(s32);
 static void SndInit(s32, u32, u8, u32);
 static CSender *g_pSender = NULL;
-static DWORD *g_dwThreadId = NULL;
+static DWORD *g_pdwThreadId = NULL;
 static u32 g_dwSafeFlag;
 HANDLE g_hMuxtex;
 
@@ -96,7 +102,7 @@ void CsenderTestDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 
 	CDialogEx::OnSysCommand(nID, lParam);
-	
+	return ;
 }
 
 // If you add a minimize button to your dialog, you will need the code below
@@ -141,7 +147,7 @@ void CsenderTestDlg::OnCancel()
     if (g_dwSafeFlag)
     {
        AfxMessageBox(_T("有线程未退出,先停止发送")); 
-        return ;
+       return ;
     }
     SAFE_DELETEA(g_pSender);
     CDialog::OnCancel();
@@ -195,13 +201,6 @@ void CsenderTestDlg::GetConfig()
 	return ;
 }
 
-void CsenderTestDlg::PrintInfo(CString strInfo)
-{
-    m_printInfo += strInfo;
-    UpdateData(FALSE);
-    return ;
-}
-
 DWORD WINAPI ThreadProcSend (LPVOID pTPrintInfo)
 {
     g_dwSafeFlag++;
@@ -210,16 +209,17 @@ DWORD WINAPI ThreadProcSend (LPVOID pTPrintInfo)
 	return 0;
 }
 
+/*
+    函数功能：初始化操作，并发送码流
+*/
 void CsenderTestDlg::OnBnClickedStartSendButton()
 {
-	// TODO: Add your control notification handler code here
-
-    delete []g_pSender;
+    SAFE_DELETEA(g_pSender);
     UpdateData(true);
     CreateSnd(m_nSendPathNum);
     ActiveX2Snd(m_nSendPathNum);
     SndInit(m_nSendPathNum, m_NetBand, m_frameRate, m_dwBitRate);
-	g_dwThreadId = new DWORD[m_nSendPathNum];
+	g_pdwThreadId = new DWORD[m_nSendPathNum];
     for(s32 i = 0; i < m_nSendPathNum; i++)
     {
 
@@ -228,7 +228,7 @@ void CsenderTestDlg::OnBnClickedStartSendButton()
             ThreadProcSend, 
             &g_pSender[i], 
             0, 
-            &g_dwThreadId[i]);
+            &g_pdwThreadId[i]);
         if(NULL == handle)
         {
             AfxMessageBox(_T("send fail"));
@@ -236,7 +236,7 @@ void CsenderTestDlg::OnBnClickedStartSendButton()
         else
         {
             CString str;
-            str.Format(_T("handle is %u\r\n"), g_dwThreadId[i]);
+            str.Format(_T("handle is %u\r\n"), g_pdwThreadId[i]);
             m_printInfo += str;
             UpdateData(FALSE);
 
@@ -245,10 +245,12 @@ void CsenderTestDlg::OnBnClickedStartSendButton()
     return ;
 }
 
-
+/*
+    函数功能：停止发送
+*/
 void CsenderTestDlg::OnBnClickedStopSendButton()
 {
-	// TODO: Add your control notification handler code here
+	
     for(s32 i = 0; i < m_nSendPathNum; i++)
     {
 	    g_pSender[i].Stop();
@@ -256,7 +258,9 @@ void CsenderTestDlg::OnBnClickedStopSendButton()
     return ;
 }
 
-
+/*
+    函数功能：创建并初始化sender
+*/
 void CreateSnd(s32 nNum)
 {
 
@@ -268,6 +272,9 @@ void CreateSnd(s32 nNum)
     return ;
 }
 
+/*
+    函数功能：发送初始化
+*/
 void SndInit(s32 nNum, u32 dwNetBand, u8 ucFrameRate, u32 dwBitRate)
 {
     for(s32 i = 0; i < nNum; i++)
@@ -281,6 +288,9 @@ void SndInit(s32 nNum, u32 dwNetBand, u8 ucFrameRate, u32 dwBitRate)
     return ;
 }
 
+/*
+    函数功能：控件数据更新至sender
+*/
 void CsenderTestDlg::ActiveX2Snd(s32 nNum)
 {
     USES_CONVERSION;
