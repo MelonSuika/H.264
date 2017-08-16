@@ -5,21 +5,6 @@
 #endif
 
 
-#ifdef WIN32
-#define g_debug         printf
-#define g_warning       printf
-#define g_malloc0       malloc
-#define g_usleep        Sleep
-#define gpointer        void*
-#define g_free          free
-#define g_snprintf      sprintf_s
-#define LINUX_TIME      1
-#else
-#define LINUX_TIME      1000
-#endif
-
-
-
 
 const s8* g_pchFileConfig   = "./config.ini";
 static u32 g_dwLines = 0;
@@ -77,7 +62,7 @@ u16 CSender::Init(void)
 {
 #ifdef WIN32
     m_pWndEdit = (CEdit*)AfxGetApp()->m_pMainWnd->GetDlgItem(IDC_EDITPRINT);
-    if (NULL == m_pWndEdit)
+    if (!m_pWndEdit)
     {
         PrintLCommon("获取edit控件失败");
         return GET_EDIT_ERROR;
@@ -92,7 +77,7 @@ u16 CSender::Init(void)
 
     /* 内部获取对象 */
     m_pcSender = CKdvMediaSnd::GetMediaSnd();
-    if (NULL == m_pcSender)
+    if (!m_pcSender)
     {
         PrintLCommon("GetMediaSnd fail");
         return GET_SND_ERROR;
@@ -101,11 +86,23 @@ u16 CSender::Init(void)
     /* 读取配置文件 */
     GetConfig();
 
+    /* 媒体类型设置 */
+    SetMediaType(m_nMediaType);
+
+/* LINUX程序启动后，直接进入发送状态，初始化时需要判断文件 */
+#ifdef _LINUX_
+    /* 媒体文件判断 */
+    s32 nRet = access(m_pchMediaDatName, F_OK);
+    if (nRet)
+    {
+        PrintLCommon("媒体文件不存在");
+        return NO_DATFILE_ERROR;
+    }
+
     /* 长度文件处理 */
     g_snprintf(m_pchMediaLenName, MAX_FILENAME, "%s.len", m_pchMediaDatName);
-    SetMediaType(m_nMediaType);
-    s32 nRet = access(m_pchMediaLenName, F_OK);
-    if (F_OK != nRet)
+    nRet = access(m_pchMediaLenName, F_OK);
+    if (nRet)
     {
         if (MEDIA_TYPE_H264 != m_nMediaType)
         {
@@ -114,10 +111,15 @@ u16 CSender::Init(void)
         }
         else
         {
-            CreateFrameLen(m_pchMediaDatName);
+            nRet = CreateFrameLenFile(m_pchMediaDatName);
+            if (!nRet)
+            {
+                PrintLCommon("创建媒体长度文件失败");
+                return CREATE_LEN_FILE_ERROR;
+            }
         }
     }
-    
+#endif
     /* 延时和帧大小计算 */
     m_dwLoopTime = 1000 * LINUX_TIME / m_nFramerate;
     m_dwFrameSize = 1024 * 1024;
@@ -133,12 +135,20 @@ u16 CSender::Init(void)
         return CREATE_SND_ERROR;
 
     }
-    return SND_NO_ERROR;
+    return INIT_NO_ERROR;
 }
 
 // 配置文件参数获取
 void CSender::GetConfig(void)
 {
+    //s32 nRet = access(g_pchFileConfig, F_OK);
+    // 配置文件不存在，创建并填入默认参数,未实现
+    //if (nRet)
+    //{
+        //FILE fp = fopen(g_pchFileConfig, "a");
+
+        //return ;
+    //}
 
     /* 文件信息 */
     if (!GetRegKeyInt(g_pchFileConfig, "FILTERINFO", "WIDTH", 1920, &m_nWidth))
@@ -246,7 +256,6 @@ void CSender::Send()
     s8 *pchInfo = new s8[MAX_OUTINFO];
     if (NULL == m_pInDat || NULL == m_pInTxt)
     {
-        // error
         PrintLCommon("open file fail");
         return ;
     }
@@ -261,7 +270,6 @@ void CSender::Send()
 
     if (NULL == m_pchData || NULL == m_pchLen)
     {
-        //error
         printf("分配内存失败\n");
         return ;
     }
@@ -309,7 +317,6 @@ void CSender::Send()
             tFrmHdr.m_tVideoParam.m_wVideoHeight    = m_nHeight;
             tFrmHdr.m_tVideoParam.m_bHighProfile    = TRUE;
 
-
             if (1 == nFrmId)
             {
                 tFrmHdr.m_tVideoParam.m_bKeyFrame   = TRUE;
@@ -327,7 +334,7 @@ void CSender::Send()
                 printf("medianet send fail %d\n", wRet);
                 return ;
             }
-            if(nFrmId % 12 == 1)
+            if (nFrmId % 12 == 1)
             {
                 m_pcSender->GetStatistics(tKdvSndStatistics);
                 g_snprintf(pchInfo, MAX_FILENAME, "线路:%d, 已发送包数:%d,已发送帧数:%d,丢帧数:%d",
@@ -441,7 +448,7 @@ s8 * CSender::GetMediaLenName(void)
 /* set send srcip */
 void CSender::SetSrcIp(const s8 *pchSrcIp)
 {
-    if(m_pchSendSrcIP)
+    if (m_pchSendSrcIP)
     {
         memset(m_pchSendSrcIP, 0,  MAX_IP - 1);
     }
@@ -462,7 +469,7 @@ s8 * CSender::GetSrcIp()
 /* set dstip */
 void CSender::SetDstIp(const s8 *pchDstIp)
 {
-    if(m_pchSendDstIP)
+    if (m_pchSendDstIP)
     {
         memset(m_pchSendDstIP, 0, MAX_IP - 1);
     }
@@ -479,6 +486,7 @@ s8 * CSender::GetDstIp(void)
 {
     return m_pchSendDstIP;
 }
+
 /* set framerate */
 void CSender::SetFrameRate(s32 nFramerate)
 {

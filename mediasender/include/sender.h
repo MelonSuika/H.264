@@ -7,23 +7,23 @@
 #include "kdvdef.h"
 #include "mediatype.h"
 #include "osp.h"
-#include "io.h"
 #include "h264Len.h"
+#include "common.h"
 #ifdef WIN32
 #include <atlconv.h>
+#include "io.h"
 #else
 #include "glib.h"
+#include "unistd.h"
 #endif
 
-#define SAFE_FCLOSE(p)          if (p){fclose(p), p = NULL;}
-#define SAFE_DELETEA(p)         if (p){delete []p, p = NULL;}
-#define SAFE_DELETE(p)          if (p){delete p, p = NULL;}
-
-#define SND_NO_ERROR        (u16)(0)
-#define GET_EDIT_ERROR      (u16)(1)
-#define GET_SND_ERROR       (u16)(2)
-#define CREATE_SND_ERROR    (u16)(3)
-#define NO_LENFILE_ERROR    (u16)(4)
+#define INIT_NO_ERROR                (u16)(0)
+#define GET_EDIT_ERROR          (u16)(1)
+#define GET_SND_ERROR           (u16)(2)
+#define CREATE_SND_ERROR        (u16)(3)
+#define NO_LENFILE_ERROR        (u16)(4)
+#define CREATE_LEN_FILE_ERROR   (u16)(5)
+#define NO_DATFILE_ERROR        (u16)(6)
 
 #define DATA_LEN                (512 * 1024)                  // 一帧数据最大长度
 #define LEN_LEN                 (32)                          // 媒体文件长度长度

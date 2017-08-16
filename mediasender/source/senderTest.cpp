@@ -110,8 +110,10 @@ void *threadFuc(void *pthPrm)
 {
 
     printf("this is pthread %d\n", getpid());
+    s32 nRet = -1;
+
     ((PTPthreadParam)pthPrm)->m_pSender = new CSender();
-    ((PTPthreadParam)pthPrm)->m_pSender->Init();
+    nRet = ((PTPthreadParam)pthPrm)->m_pSender->Init();
 
     s32 nDstPort = ((PTPthreadParam)pthPrm)->m_pSender->GetDstIpPort();
     s32 nSrcPort = ((PTPthreadParam)pthPrm)->m_pSender->GetSrcIpPort();

@@ -317,7 +317,7 @@ void CsenderTestDlg::ActiveX2Snd(s32 nNum)
        
     }
     s32 nRet = access(g_pSender[0].GetMediaLenName(), F_OK);
-    if (F_OK != nRet)
+    if (nRet)
     {
         if (MEDIA_TYPE_H264 != g_pSender[0].GetMeidaTypeNum())
         {
@@ -326,7 +326,7 @@ void CsenderTestDlg::ActiveX2Snd(s32 nNum)
         }
         else
         {
-            CreateFrameLen(g_pSender[0].GetMediaDatName());
+            CreateFrameLenFile(g_pSender[0].GetMediaDatName());
         }
     }
     return ;

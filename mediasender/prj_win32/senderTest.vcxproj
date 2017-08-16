@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\10-common\include\protocol\kdvsys.h" />
+    <ClInclude Include="..\..\include\common.h" />
     <ClInclude Include="..\..\include\h264Len.h" />
     <ClInclude Include="..\..\include\mediatype.h" />
     <ClInclude Include="..\..\include\sender.h" />
