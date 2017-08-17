@@ -41,9 +41,9 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>.\;..\..\include;..\..\..\..\..\10-common\include\system;..\..\..\..\..\10-common\include\platform;..\..\..\..\..\10-common\include\protocol;$(IncludePath)</IncludePath>
-    <LibraryPath>..\..\..\..\..\10-common\lib\debug\win32_2010;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\..\source;$(SourcePath)</SourcePath>
+    <IncludePath>.\;..\include;..\..\..\..\10-common\include\system;..\..\..\..\10-common\include\platform;..\..\..\..\10-common\include\protocol;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\..\..\10-common\lib\debug\win32_2010;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -108,23 +108,23 @@
     <None Include="res\senderTest.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\10-common\include\protocol\kdvsys.h" />
-    <ClInclude Include="..\..\include\common.h" />
-    <ClInclude Include="..\..\include\h264Len.h" />
-    <ClInclude Include="..\..\include\mediatype.h" />
-    <ClInclude Include="..\..\include\sender.h" />
-    <ClInclude Include="..\..\include\senderTestDlg.h" />
-    <ClInclude Include="..\..\include\stdafx.h" />
+    <ClInclude Include="..\..\..\..\10-common\include\protocol\kdvsys.h" />
+    <ClInclude Include="..\include\common.h" />
+    <ClInclude Include="..\include\h264Len.h" />
+    <ClInclude Include="..\include\mediatype.h" />
+    <ClInclude Include="..\include\sender.h" />
+    <ClInclude Include="..\include\senderTestDlg.h" />
+    <ClInclude Include="..\include\stdafx.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="senderTest.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\h264Len.cpp" />
-    <ClCompile Include="..\..\source\sender.cpp" />
-    <ClCompile Include="..\..\source\senderTest.cpp" />
-    <ClCompile Include="..\..\source\senderTestDlg.cpp" />
-    <ClCompile Include="..\..\source\stdafx.cpp" />
+    <ClCompile Include="..\source\h264Len.cpp" />
+    <ClCompile Include="..\source\sender.cpp" />
+    <ClCompile Include="..\source\senderTest.cpp" />
+    <ClCompile Include="..\source\senderTestDlg.cpp" />
+    <ClCompile Include="..\source\stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="senderTest.rc" />

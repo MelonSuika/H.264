@@ -9,7 +9,7 @@
 ###
 #########################################################################
 
-TOP        := $(shell pwd)/../../../
+TOP        := $(shell pwd)/../../../../
 COMMON_TOP := $(TOP)/10-common
 
 SRC_DIR    := ../source
@@ -34,6 +34,7 @@ endif
 ## SRCS := $(basename $(shell find $(SRC_DIR) ! -name "senderTestDlg.cpp" ! -name "stdafx.cpp" -name "*.cpp"))
 SRCS := senderTest
 SRCS += sender
+SRCS += h264Len
 OBJS := $(foreach obj,$(SRCS),$(OBJ_DIR)/$(obj))
 
 ## Libraries to include in shared object file

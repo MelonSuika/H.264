@@ -19,9 +19,14 @@
 #define SAFE_DELETE(p)      if (p){delete p; p = NULL;}
 
 
+#define MAX_FILENAME            (256)                         // 文件名最大长度
 
-
-
+/* 统一unistd和io.h中的宏定义 */
+#define F_OK        0
+#define X_OK        1
+#define W_OK        2
+#define R_OK        4  
+#define WR_OK       6
 
 
 

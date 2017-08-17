@@ -4,8 +4,6 @@
 #include "resource.h"
 #endif
 
-
-
 const s8* g_pchFileConfig   = "./config.ini";
 static u32 g_dwLines = 0;
 #ifdef WIN32

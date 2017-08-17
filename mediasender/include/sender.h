@@ -17,7 +17,7 @@
 #include "unistd.h"
 #endif
 
-#define INIT_NO_ERROR                (u16)(0)
+#define INIT_NO_ERROR           (u16)(0)
 #define GET_EDIT_ERROR          (u16)(1)
 #define GET_SND_ERROR           (u16)(2)
 #define CREATE_SND_ERROR        (u16)(3)
@@ -27,7 +27,6 @@
 
 #define DATA_LEN                (512 * 1024)                  // 一帧数据最大长度
 #define LEN_LEN                 (32)                          // 媒体文件长度长度
-#define MAX_FILENAME            (256)                         // 文件名最大长度
 #define MAX_OUTINFO             (256)                         // 一包打印信息
 #define MAX_IP                  (64)                          // IP长度
 #define MAX_MEDIATYPENAME       (64)                          // 最大媒体类型名
@@ -35,11 +34,6 @@
 #define PORT_ADD_NUM            (2)                           // 多路发送时，端口间隔
 #define MAX_LINE                (500)                         // 控件最大显示行数
 
-#define F_OK        0
-#define X_OK        1
-#define W_OK        2
-#define R_OK        4  
-#define WR_OK       6
 
 class CSender
 {

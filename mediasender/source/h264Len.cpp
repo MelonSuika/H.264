@@ -50,7 +50,7 @@ u32 GolombCode(u8 *pbyData, s32 nBytePosition, BOOL32 bIsZero)
 */
 BOOL32 CreateFrameLenFile(s8 const* pchFileName)
 {
-    BOOL32 bRet         = TRUE; // 整个帧长度创建与解析成功与否
+    BOOL32 bRet         = FALSE; // 整个帧长度创建与解析成功与否
     FILE *fp            = NULL; 
     u8 *pbyData         = NULL; // 读入的媒体文件数据
     s8 *pchLenFileName  = NULL; // 媒体长度文件名
@@ -61,7 +61,6 @@ BOOL32 CreateFrameLenFile(s8 const* pchFileName)
         if (!fp)
         {
             printf("open fail\n");
-            bRet = FALSE;
             break;
         }
         fseek(fp, 0, SEEK_END);
@@ -71,7 +70,6 @@ BOOL32 CreateFrameLenFile(s8 const* pchFileName)
         if (!pbyData)
         {
             printf("new fail\n");
-            bRet = FALSE;
             break;
         }
         fread(pbyData, 1, nFileLen, fp);
@@ -82,15 +80,13 @@ BOOL32 CreateFrameLenFile(s8 const* pchFileName)
         s32 nPreFrameStartPos = 0;
         s32 nFrameLen = 0;
 
-        pchLenFileName  = new s8[strlen(pchFileName) + 10];
-        strcpy(pchLenFileName, pchFileName);
-        strcat(pchLenFileName, ".len");
+        pchLenFileName  = new s8[MAX_FILENAME];
+        g_snprintf(pchLenFileName, MAX_FILENAME, "%s.len", pchFileName);
     
         fp = fopen(pchLenFileName, "a");
         if (!fp)
         {
             printf("open lenFile fail\n");
-            bRet = FALSE;
             break;
         }
 
@@ -220,6 +216,7 @@ BOOL32 CreateFrameLenFile(s8 const* pchFileName)
         }
         printf("%d\n", nFileLen - nPreFrameStartPos);
         fprintf(fp, "%d\n", nFileLen - nPreFrameStartPos);
+        bRet = TRUE;
     }while(0);
     SAFE_DELETEA(pbyData);
     SAFE_DELETEA(pchLenFileName);

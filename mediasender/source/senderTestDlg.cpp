@@ -219,7 +219,7 @@ void CsenderTestDlg::OnBnClickedStartSendButton()
     CreateSnd(m_nSendPathNum);
     ActiveX2Snd(m_nSendPathNum);
     SndInit(m_nSendPathNum, m_NetBand, m_frameRate, m_dwBitRate);
-	g_pdwThreadId = new DWORD[m_nSendPathNum];
+    g_pdwThreadId = new DWORD[m_nSendPathNum];
     for(s32 i = 0; i < m_nSendPathNum; i++)
     {
 
