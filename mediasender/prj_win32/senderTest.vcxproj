@@ -115,9 +115,9 @@
     <ClInclude Include="..\include\sender.h" />
     <ClInclude Include="..\include\senderTestDlg.h" />
     <ClInclude Include="..\include\stdafx.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="senderTest.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="..\include\Resource.h" />
+    <ClInclude Include="..\include\senderTest.h" />
+    <ClInclude Include="..\include\targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\h264Len.cpp" />

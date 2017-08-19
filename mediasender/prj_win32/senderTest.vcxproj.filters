@@ -33,42 +33,42 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\sender.h">
+    <ClInclude Include="..\include\sender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\mediatype.h">
+    <ClInclude Include="..\include\mediatype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\stdafx.h">
+    <ClInclude Include="..\include\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\10-common\include\protocol\kdvsys.h">
+    <ClInclude Include="..\..\..\..\10-common\include\protocol\kdvsys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\h264Len.h">
+    <ClInclude Include="..\include\h264Len.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\senderTestDlg.h">
+    <ClInclude Include="..\include\senderTestDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\common.h">
+    <ClInclude Include="..\include\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\senderTest.cpp">
+    <ClCompile Include="..\source\senderTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\sender.cpp">
+    <ClCompile Include="..\source\sender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\stdafx.cpp">
+    <ClCompile Include="..\source\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\senderTestDlg.cpp">
+    <ClCompile Include="..\source\senderTestDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\h264Len.cpp">
+    <ClCompile Include="..\source\h264Len.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
